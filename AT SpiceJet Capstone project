@@ -1,0 +1,265 @@
+Pom.xml:
+<dependencies>
+    <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>4.8.0</version>
+    </dependency>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.2</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+--------------------------------------------------------------------------------------
+WebDriver setup:
+package utils;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class WebDriverSetup {
+    public static WebDriver getDriver() {
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        WebDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        return driver;
+    }
+}
+--------------------------------------------------------------------------------------
+PageObjectModel:
+Signup paege.Java
+package pages;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+public class SignupPage {
+    WebDriver driver;
+
+    public SignupPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    By firstNameField = By.id("firstName");
+    By lastNameField = By.id("lastName");
+    By mobileField = By.id("mobile");
+    By emailField = By.id("email");
+    By passwordField = By.id("password");
+    By signUpButton = By.id("signUpBtn");
+
+    public void fillMandatoryFields(String firstName, String lastName, String mobile, String email, String password) {
+        driver.findElement(firstNameField).sendKeys(firstName);
+        driver.findElement(lastNameField).sendKeys(lastName);
+        driver.findElement(mobileField).sendKeys(mobile);
+        driver.findElement(emailField).sendKeys(email);
+        driver.findElement(passwordField).sendKeys(password);
+    }
+
+    public void clickSignUp() {
+        driver.findElement(signUpButton).click();
+    }
+
+    public boolean isSignupSuccessful() {
+        // Implement logic to verify if the signup was successful
+        return driver.findElement(By.id("successMessage")).isDisplayed();
+    }
+}
+--------------------------------------------------------------------------------------
+LoginPage.java
+package pages;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+public class LoginPage {
+    WebDriver driver;
+
+    public LoginPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    By loginButton = By.id("ctl00_HyperLinkLogin");
+    By emailField = By.id("email");
+    By passwordField = By.id("password");
+    By loginSubmitButton = By.id("loginBtn");
+
+    public void login(String email, String password) {
+        driver.findElement(loginButton).click();
+        driver.findElement(emailField).sendKeys(email);
+        driver.findElement(passwordField).sendKeys(password);
+        driver.findElement(loginSubmitButton).click();
+    }
+
+    public boolean isLoginSuccessful() {
+        // Implement logic to verify if the login was successful
+        return driver.findElement(By.id("welcomeMessage")).isDisplayed();
+    }
+}
+--------------------------------------------------------------------------------------
+FlightSearchPage.java
+package pages;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+public class FlightSearchPage {
+    WebDriver driver;
+
+    public FlightSearchPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    By oneWayRadioButton = By.id("ctl00_mainContent_rbtnl_Trip_0");
+    By roundTripRadioButton = By.id("ctl00_mainContent_rbtnl_Trip_1");
+    By originInput = By.id("ctl00_mainContent_ddl_originStation1_CTXT");
+    By destinationInput = By.id("ctl00_mainContent_ddl_destinationStation1_CTXT");
+    By searchButton = By.id("ctl00_mainContent_btn_FindFlights");
+
+    public void searchOneWayFlight(String origin, String destination) {
+        driver.findElement(oneWayRadioButton).click();
+        driver.findElement(originInput).sendKeys(origin);
+        driver.findElement(destinationInput).sendKeys(destination);
+        driver.findElement(searchButton).click();
+    }
+
+    public void searchRoundTripFlight(String origin, String destination) {
+        driver.findElement(roundTripRadioButton).click();
+        driver.findElement(originInput).sendKeys(origin);
+        driver.findElement(destinationInput).sendKeys(destination);
+        driver.findElement(searchButton).click();
+    }
+}
+--------------------------------------------------------------------------------------
+BookingPage.java
+package pages;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+public class BookingPage {
+    WebDriver driver;
+
+    public BookingPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    By passengerNameField = By.id("passengerName");
+    By paymentDetailsField = By.id("paymentDetails");
+    By bookButton = By.id("bookBtn");
+
+    public void fillBookingDetails(String passengerName, String paymentDetails) {
+        driver.findElement(passengerNameField).sendKeys(passengerName);
+        driver.findElement(paymentDetailsField).sendKeys(paymentDetails);
+    }
+
+    public void clickBook() {
+        driver.findElement(bookButton).click();
+    }
+
+    public boolean isBookingSuccessful() {
+        // Implement logic to verify if the booking was successful
+        return driver.findElement(By.id("bookingConfirmationMessage")).isDisplayed();
+    }
+}
+--------------------------------------------------------------------------------------
+ValidationPage.java
+package pages;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+public class ValidationPage {
+    WebDriver driver;
+
+    public ValidationPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    By checkinField = By.id("checkin");
+    By flightStatusField = By.id("flightStatus");
+    By manageBookingField = By.id("manageBooking");
+
+    public boolean validateCheckIn() {
+        return driver.findElement(checkinField).isDisplayed();
+    }
+
+    public boolean validateFlightStatus() {
+        return driver.findElement(flightStatusField).isDisplayed();
+    }
+
+    public boolean validateManageBooking() {
+        return driver.findElement(manageBookingField).isDisplayed();
+    }
+}
+--------------------------------------------------------------------------------------
+ Test Classes
+TestSuite.java
+package tests;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.WebDriver;
+import pages.SignupPage;
+import pages.LoginPage;
+import pages.FlightSearchPage;
+import pages.BookingPage;
+import pages.ValidationPage;
+import utils.WebDriverSetup;
+
+public class TestSuite {
+    WebDriver driver;
+
+    @Before
+    public void setUp() {
+        driver = WebDriverSetup.getDriver();
+        driver.get("https://www.spicejet.com/");
+    }
+
+    @Test
+    public void testSignup() {
+        SignupPage signupPage = new SignupPage(driver);
+        signupPage.fillMandatoryFields("John", "Doe", "1234567890", "johndoe@example.com", "password123");
+        signupPage.clickSignUp();
+        assert(signupPage.isSignupSuccessful());
+    }
+
+    @Test
+    public void testLogin() {
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("dummyemail@example.com", "dummyPassword");
+        assert(loginPage.isLoginSuccessful());
+    }
+
+    @Test
+    public void testSearchFlights() {
+        FlightSearchPage flightSearchPage = new FlightSearchPage(driver);
+        flightSearchPage.searchOneWayFlight("Delhi", "Mumbai");
+        // Add assertions to verify search results
+
+        flightSearchPage.searchRoundTripFlight("Delhi", "Mumbai");
+        // Add assertions to verify search results
+    }
+
+    @Test
+    public void testBooking() {
+        BookingPage bookingPage = new BookingPage(driver);
+        bookingPage.fillBookingDetails("John Doe", "1234567890123456");
+        bookingPage.clickBook();
+        assert(bookingPage.isBookingSuccessful());
+    }
+
+    @Test
+    public void testValidation() {
+        ValidationPage validationPage = new ValidationPage(driver);
+        assert(validationPage.validateCheckIn());
+        assert(validationPage.validateFlightStatus());
+        assert(validationPage.validateManageBooking());
+    }
+
+    @After
+    public void tearDown() {
+        driver.quit();
+    }
+}
