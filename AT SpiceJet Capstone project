@@ -263,3 +263,7 @@ public class TestSuite {
         driver.quit();
     }
 }
+-------------------------------------------------------------
+Screenshots
+File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+FileUtils.copyFile(screenshot, new File("path/to/screenshots/screenshot.png"));
